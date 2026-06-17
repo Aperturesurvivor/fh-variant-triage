@@ -102,6 +102,9 @@ See [DATA_SOURCES.md](DATA_SOURCES.md) for data provenance and planned external
 annotations.
 See [PEER_REVIEW_NOTES.md](PEER_REVIEW_NOTES.md) for supported claims, unsupported
 claims, and known reviewer concerns.
+See [REVIEWER_GUIDE.md](REVIEWER_GUIDE.md) for a peer-review checklist.
+See [ROADMAP.md](ROADMAP.md) and [docs/MANUSCRIPT_DRAFT.md](docs/MANUSCRIPT_DRAFT.md)
+for planned scientific extensions and manuscript framing.
 
 ## License
 
