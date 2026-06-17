@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this research prototype, please cite it as below."
+title: "FH Variant Triage"
+version: 0.1.0
+date-released: 2026-06-17
+authors:
+  - family-names: Wilson
+    given-names: Josiah
+license: MIT
+repository-code: "https://github.com/Aperturesurvivor/fh-variant-triage"
+abstract: "Research prototype for familial hypercholesterolemia variant triage using public ClinVar data."
+

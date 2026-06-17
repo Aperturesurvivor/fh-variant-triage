@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FH Variant Triage Monitor</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #172026;
+        --muted: #62707a;
+        --line: #d8dee4;
+        --panel: #ffffff;
+        --bg: #f4f7f8;
+        --green: #1f8a5f;
+        --blue: #2769b3;
+        --amber: #b66a00;
+        --red: #b93838;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+      }
+      header {
+        padding: 18px 24px;
+        border-bottom: 1px solid var(--line);
+        background: #fbfcfd;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+      }
+      h1 {
+        margin: 0;
+        font-size: 20px;
+        line-height: 1.2;
+        font-weight: 680;
+      }
+      .sub {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .status {
+        min-width: 240px;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        font-size: 13px;
+      }
+      main {
+        padding: 20px 24px 32px;
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 14px;
+      }
+      section {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 16px;
+        min-height: 120px;
+      }
+      h2 {
+        margin: 0 0 12px;
+        font-size: 14px;
+        line-height: 1.25;
+        font-weight: 700;
+      }
+      .span-4 { grid-column: span 4; }
+      .span-6 { grid-column: span 6; }
+      .span-8 { grid-column: span 8; }
+      .span-12 { grid-column: span 12; }
+      .metric-row {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+      .metric {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 12px;
+        background: #fafcfd;
+      }
+      .metric .label {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .metric .value {
+        margin-top: 6px;
+        font-size: 24px;
+        font-weight: 720;
+      }
+      .bar-row {
+        display: grid;
+        grid-template-columns: 92px 1fr 72px;
+        align-items: center;
+        gap: 10px;
+        margin: 8px 0;
+        font-size: 13px;
+      }
+      .bar {
+        height: 12px;
+        border-radius: 999px;
+        background: #e7ecef;
+        overflow: hidden;
+      }
+      .bar > div {
+        height: 100%;
+        background: var(--blue);
+      }
+      .bar.green > div { background: var(--green); }
+      .bar.amber > div { background: var(--amber); }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      th, td {
+        text-align: left;
+        border-bottom: 1px solid var(--line);
+        padding: 9px 8px;
+        vertical-align: top;
+      }
+      th {
+        color: var(--muted);
+        font-weight: 650;
+        background: #fafcfd;
+      }
+      .empty {
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .stamp {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .plain {
+        color: var(--ink);
+        font-size: 14px;
+        line-height: 1.55;
+        max-width: 980px;
+      }
+      .plain strong { font-weight: 720; }
+      .chart {
+        width: 100%;
+        height: 320px;
+        display: block;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fbfcfd;
+      }
+      .legend {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 6px;
+      }
+      @media (max-width: 900px) {
+        header { display: block; }
+        .status { margin-top: 12px; }
+        .span-4, .span-6, .span-8 { grid-column: span 12; }
+        .metric-row { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>
+        <h1>FH Variant Triage Monitor</h1>
+        <div class="sub">ClinVar familial hypercholesterolemia dataset and baseline model run</div>
+      </div>
+      <div class="status">
+        <strong id="stage">Waiting</strong>
+        <div id="message" class="sub">No status file yet.</div>
+        <div id="updated" class="stamp"></div>
+      </div>
+    </header>
+    <main>
+      <section class="span-12">
+        <h2>Plain-English Meaning</h2>
+        <div class="plain" id="plain-meaning">
+          Waiting for the model run. Once results exist, this section will translate the numbers into normal language.
+        </div>
+      </section>
+      <section class="span-12">
+        <h2>Dataset Summary</h2>
+        <div class="metric-row">
+          <div class="metric"><div class="label">Total FH Variants</div><div class="value" id="rows-total">-</div></div>
+          <div class="metric"><div class="label">Labeled For Training</div><div class="value" id="rows-labeled">-</div></div>
+          <div class="metric"><div class="label">Held-Out Test Rows</div><div class="value" id="test-rows">-</div></div>
+        </div>
+      </section>
+      <section class="span-6">
+        <h2>Labels</h2>
+        <div id="labels" class="empty">Waiting for dataset profile.</div>
+      </section>
+      <section class="span-6">
+        <h2>Genes</h2>
+        <div id="genes" class="empty">Waiting for dataset profile.</div>
+      </section>
+      <section class="span-12">
+        <h2>Accuracy As The Model Sees More Examples</h2>
+        <svg id="accuracy-chart" class="chart" role="img" aria-label="Model accuracy line chart"></svg>
+        <div class="legend">
+          <span><span class="dot" style="background:#2769b3"></span>Random forest</span>
+          <span><span class="dot" style="background:#1f8a5f"></span>Logistic regression</span>
+        </div>
+      </section>
+      <section class="span-12">
+        <h2>Model Score Table</h2>
+        <div id="models" class="empty">Waiting for training results.</div>
+      </section>
+      <section class="span-12">
+        <h2>Gene-Specific Models</h2>
+        <div id="gene-models" class="empty">Waiting for gene-specific model results.</div>
+      </section>
+      <section class="span-12">
+        <h2>Review Threshold Tradeoff</h2>
+        <div id="operating-points" class="empty">Waiting for model analysis.</div>
+      </section>
+      <section class="span-12">
+        <h2>Uncertain Variant Triage</h2>
+        <div id="unlabeled-triage" class="empty">Waiting for unlabeled variant scores.</div>
+      </section>
+      <section class="span-6">
+        <h2>Calibration</h2>
+        <div id="calibration" class="empty">Waiting for model analysis.</div>
+      </section>
+      <section class="span-6">
+        <h2>Top Features</h2>
+        <div id="feature-importance" class="empty">Waiting for model analysis.</div>
+      </section>
+      <section class="span-12">
+        <h2>Harder Validation Tests</h2>
+        <div id="validation-splits" class="empty">Waiting for validation split results.</div>
+      </section>
+    </main>
+    <script>
+      const fmt = new Intl.NumberFormat();
+      function setText(id, value) {
+        document.getElementById(id).textContent = value ?? "-";
+      }
+      async function getJson(path) {
+        const res = await fetch(path + "?t=" + Date.now());
+        if (!res.ok) throw new Error(path);
+        return res.json();
+      }
+      function bars(el, obj, colorClass = "") {
+        const entries = Object.entries(obj || {}).sort((a, b) => b[1] - a[1]);
+        if (!entries.length) {
+          el.className = "empty";
+          el.textContent = "No data yet.";
+          return;
+        }
+        const max = Math.max(...entries.map(([, v]) => v));
+        el.className = "";
+        el.innerHTML = entries.map(([k, v]) => `
+          <div class="bar-row">
+            <div>${k}</div>
+            <div class="bar ${colorClass}"><div style="width:${Math.max(2, (v / max) * 100)}%"></div></div>
+            <div>${fmt.format(v)}</div>
+          </div>
+        `).join("");
+      }
+      function renderModels(metrics) {
+        const target = document.getElementById("models");
+        const models = metrics?.models || [];
+        if (!models.length) {
+          target.className = "empty";
+          target.textContent = "Waiting for training results.";
+          return;
+        }
+        target.className = "";
+        target.innerHTML = `
+          <table>
+            <thead><tr><th>Model</th><th>Balanced Acc.</th><th>ROC-AUC</th><th>Avg Precision</th><th>Confusion Matrix</th></tr></thead>
+            <tbody>
+              ${models.map(m => `
+                <tr>
+                  <td>${m.name}</td>
+                  <td>${m.balanced_accuracy.toFixed(3)}</td>
+                  <td>${m.roc_auc.toFixed(3)}</td>
+                  <td>${m.average_precision.toFixed(3)}</td>
+                  <td>[${m.confusion_matrix.map(r => "[" + r.join(", ") + "]").join(", ")}]</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        `;
+      }
+      function pct(x) {
+        return (x * 100).toFixed(1) + "%";
+      }
+      function renderPlain(metrics, profile) {
+        const target = document.getElementById("plain-meaning");
+        if (!metrics || !profile) return;
+        const rfReduced = (metrics.models || []).find(m => m.name === "random_forest_no_review_metadata");
+        const lrReduced = (metrics.models || []).find(m => m.name === "logistic_regression_no_review_metadata");
+        if (!rfReduced) return;
+        const cm = rfReduced.confusion_matrix;
+        const trueBenign = cm[0][0], falseAlarm = cm[0][1], missedPathogenic = cm[1][0], truePathogenic = cm[1][1];
+        target.innerHTML = `
+          We trained a first-pass model to separate variants already labeled by ClinVar as
+          <strong>probably harmless</strong> vs <strong>probably disease-causing</strong> for three familial
+          hypercholesterolemia genes. On examples it had not seen during training, the more cautious model
+          got <strong>${pct(rfReduced.classification_report.accuracy)}</strong> of predictions right.
+          <br><br>
+          Out of ${fmt.format(metrics.n_test)} hidden test variants, it correctly recognized
+          <strong>${fmt.format(trueBenign)}</strong> harmless variants and <strong>${fmt.format(truePathogenic)}</strong>
+          disease-causing variants. It raised <strong>${fmt.format(falseAlarm)}</strong> false alarms and missed
+          <strong>${fmt.format(missedPathogenic)}</strong> disease-causing variants.
+          <br><br>
+          The significance: this is enough signal to keep building. It is not yet medical-grade, because the model may
+          still be learning patterns in ClinVar's labeling history. The next test is to add outside evidence, especially
+          population frequency and existing predictor scores, then see whether the accuracy survives harder validation.
+        `;
+      }
+      function renderAccuracyChart(curve) {
+        const svg = document.getElementById("accuracy-chart");
+        const points = curve?.points || [];
+        if (!points.length) {
+          svg.innerHTML = `<text x="24" y="42" fill="#62707a" font-size="14">Waiting for learning curve.</text>`;
+          return;
+        }
+        const width = svg.clientWidth || 900;
+        const height = svg.clientHeight || 320;
+        const pad = { left: 54, right: 22, top: 24, bottom: 46 };
+        const xs = points.map(p => p.training_examples);
+        const minX = Math.min(...xs), maxX = Math.max(...xs);
+        const minY = 0.75, maxY = 1.0;
+        const xScale = x => pad.left + ((x - minX) / (maxX - minX || 1)) * (width - pad.left - pad.right);
+        const yScale = y => pad.top + (1 - ((y - minY) / (maxY - minY))) * (height - pad.top - pad.bottom);
+        const series = [
+          ["random_forest", "#2769b3"],
+          ["logistic_regression", "#1f8a5f"]
+        ];
+        const grid = [0.75, 0.80, 0.85, 0.90, 0.95, 1.0].map(y => `
+          <line x1="${pad.left}" y1="${yScale(y)}" x2="${width - pad.right}" y2="${yScale(y)}" stroke="#e1e7ea" />
+          <text x="10" y="${yScale(y) + 4}" fill="#62707a" font-size="12">${Math.round(y * 100)}%</text>
+        `).join("");
+        const paths = series.map(([name, color]) => {
+          const s = points.filter(p => p.model === name).sort((a, b) => a.training_examples - b.training_examples);
+          const d = s.map((p, i) => `${i ? "L" : "M"} ${xScale(p.training_examples)} ${yScale(p.accuracy)}`).join(" ");
+          const circles = s.map(p => `<circle cx="${xScale(p.training_examples)}" cy="${yScale(p.accuracy)}" r="4" fill="${color}"><title>${name}: ${pct(p.accuracy)} with ${fmt.format(p.training_examples)} examples</title></circle>`).join("");
+          return `<path d="${d}" fill="none" stroke="${color}" stroke-width="3" />${circles}`;
+        }).join("");
+        const xLabels = [...new Set(xs)].sort((a, b) => a - b).map(x => `
+          <text x="${xScale(x)}" y="${height - 16}" text-anchor="middle" fill="#62707a" font-size="12">${fmt.format(x)}</text>
+        `).join("");
+        svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+        svg.innerHTML = `
+          ${grid}
+          <line x1="${pad.left}" y1="${height - pad.bottom}" x2="${width - pad.right}" y2="${height - pad.bottom}" stroke="#aab4bb" />
+          <line x1="${pad.left}" y1="${pad.top}" x2="${pad.left}" y2="${height - pad.bottom}" stroke="#aab4bb" />
+          ${paths}
+          ${xLabels}
+          <text x="${width / 2}" y="${height - 2}" text-anchor="middle" fill="#62707a" font-size="12">Training examples shown to the model</text>
+        `;
+      }
+      function renderValidationSplits(payload) {
+        const target = document.getElementById("validation-splits");
+        const splits = payload?.splits || [];
+        if (!splits.length) {
+          target.className = "empty";
+          target.textContent = "Waiting for validation split results.";
+          return;
+        }
+        target.className = "";
+        target.innerHTML = `
+          <table>
+            <thead><tr><th>Test</th><th>Meaning</th><th>Accuracy</th><th>Balanced Acc.</th><th>ROC-AUC</th><th>Rows</th></tr></thead>
+            <tbody>
+              ${splits.map(s => `
+                <tr>
+                  <td>${s.name}</td>
+                  <td>${s.notes}</td>
+                  <td>${pct(s.accuracy)}</td>
+                  <td>${s.balanced_accuracy == null ? "-" : pct(s.balanced_accuracy)}</td>
+                  <td>${s.roc_auc == null ? "-" : s.roc_auc.toFixed(3)}</td>
+                  <td>${fmt.format(s.test_rows)}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        `;
+      }
+      function renderGeneModels(payload) {
+        const target = document.getElementById("gene-models");
+        const models = payload?.models || [];
+        if (!models.length) {
+          target.className = "empty";
+          target.textContent = "Waiting for gene-specific model results.";
+          return;
+        }
+        target.className = "";
+        target.innerHTML = `
+          <table>
+            <thead><tr><th>Gene</th><th>Meaning</th><th>Rows</th><th>Accuracy</th><th>Balanced Acc.</th><th>ROC-AUC</th></tr></thead>
+            <tbody>
+              ${models.map(m => `
+                <tr>
+                  <td>${m.gene}</td>
+                  <td>Train and test only inside ${m.gene}, so this measures gene-specific usefulness.</td>
+                  <td>${fmt.format(m.rows)}</td>
+                  <td>${m.skipped ? "skipped" : pct(m.accuracy)}</td>
+                  <td>${m.skipped ? "skipped" : pct(m.balanced_accuracy)}</td>
+                  <td>${m.skipped ? "skipped" : m.roc_auc.toFixed(3)}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        `;
+      }
+      function renderOperatingPoints(payload) {
+        const target = document.getElementById("operating-points");
+        const rows = payload?.operating_points || [];
+        if (!rows.length) {
+          target.className = "empty";
+          target.textContent = "Waiting for model analysis.";
+          return;
+        }
+        target.className = "";
+        target.innerHTML = `
+          <table>
+            <thead><tr><th>Review if score is at least</th><th>Pathogenic caught</th><th>Pathogenic precision</th><th>False alarms</th><th>Missed pathogenic</th><th>Accuracy</th></tr></thead>
+            <tbody>
+              ${rows.map(r => `
+                <tr>
+                  <td>${Math.round(r.threshold * 100)}%</td>
+                  <td>${pct(r.recall_pathogenic)}</td>
+                  <td>${pct(r.precision_pathogenic)}</td>
+                  <td>${fmt.format(r.false_alarm_count)}</td>
+                  <td>${fmt.format(r.missed_pathogenic_count)}</td>
+                  <td>${pct(r.accuracy)}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        `;
+      }
+      function renderCalibration(payload) {
+        const target = document.getElementById("calibration");
+        const rows = payload?.calibration_bins || [];
+        if (!rows.length) {
+          target.className = "empty";
+          target.textContent = "Waiting for model analysis.";
+          return;
+        }
+        target.className = "";
+        target.innerHTML = rows.map(r => `
+          <div class="bar-row">
+            <div>${Math.round(r.bin_min * 100)}-${Math.round(r.bin_max * 100)}%</div>
+            <div class="bar amber"><div style="width:${Math.max(2, r.observed_pathogenic_rate * 100)}%"></div></div>
+            <div>${pct(r.observed_pathogenic_rate)}</div>
+          </div>
+        `).join("") + `<div class="sub">Bars show observed pathogenic rate inside each predicted-probability bucket.</div>`;
+      }
+      function renderFeatureImportance(payload) {
+        const target = document.getElementById("feature-importance");
+        const rows = (payload?.top_feature_importances || []).slice(0, 12);
+        if (!rows.length) {
+          target.className = "empty";
+          target.textContent = "Waiting for model analysis.";
+          return;
+        }
+        target.className = "";
+        const max = Math.max(...rows.map(r => r.importance));
+        target.innerHTML = rows.map(r => `
+          <div class="bar-row" style="grid-template-columns: minmax(160px, 1fr) 1fr 70px;">
+            <div title="${r.feature}">${r.feature.replace(/^cat__|^num__/,'')}</div>
+            <div class="bar"><div style="width:${Math.max(2, (r.importance / max) * 100)}%"></div></div>
+            <div>${r.importance.toFixed(3)}</div>
+          </div>
+        `).join("");
+      }
+      function renderUnlabeledTriage(payload) {
+        const target = document.getElementById("unlabeled-triage");
+        if (!payload?.top_20?.length) {
+          target.className = "empty";
+          target.textContent = "Waiting for unlabeled variant scores.";
+          return;
+        }
+        target.className = "";
+        target.innerHTML = `
+          <div class="plain">
+            Scored <strong>${fmt.format(payload.unlabeled_rows_scored)}</strong> uncertain, conflicting, or excluded ClinVar records.
+            This table shows variants the current model would prioritize for expert review, not diagnoses.
+          </div>
+          <table>
+            <thead><tr><th>Rank</th><th>Gene</th><th>VariationID</th><th>Score</th><th>Current ClinVar label</th><th>Name</th></tr></thead>
+            <tbody>
+              ${payload.top_20.slice(0, 12).map((r, i) => `
+                <tr>
+                  <td>${i + 1}</td>
+                  <td>${r.GeneSymbol}</td>
+                  <td>${r.VariationID}</td>
+                  <td>${pct(r.pathogenic_bucket_score)}</td>
+                  <td>${r.ClinicalSignificance}</td>
+                  <td>${String(r.Name).slice(0, 120)}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        `;
+      }
+      async function refresh() {
+        let profile = null;
+        let metrics = null;
+        try {
+          const status = await getJson("../reports/status.json");
+          setText("stage", status.stage);
+          setText("message", status.message);
+        } catch {}
+        try {
+          profile = await getJson("../reports/dataset_profile.json");
+          setText("rows-total", fmt.format(profile.rows_total));
+          setText("rows-labeled", fmt.format(profile.rows_labeled));
+          bars(document.getElementById("labels"), profile.labels, "green");
+          bars(document.getElementById("genes"), profile.genes_labeled || profile.genes_total, "");
+        } catch {}
+        try {
+          metrics = await getJson("../reports/baseline_metrics.json");
+          setText("test-rows", fmt.format(metrics.n_test));
+          renderModels(metrics);
+        } catch {}
+        try {
+          const curve = await getJson("../reports/learning_curve.json");
+          renderAccuracyChart(curve);
+        } catch {
+          renderAccuracyChart(null);
+        }
+        try {
+          const validation = await getJson("../reports/validation_splits.json");
+          renderValidationSplits(validation);
+        } catch {
+          renderValidationSplits(null);
+        }
+        try {
+          const geneModels = await getJson("../reports/gene_models.json");
+          renderGeneModels(geneModels);
+        } catch {
+          renderGeneModels(null);
+        }
+        try {
+          const analysis = await getJson("../reports/model_analysis.json");
+          renderOperatingPoints(analysis);
+          renderCalibration(analysis);
+          renderFeatureImportance(analysis);
+        } catch {
+          renderOperatingPoints(null);
+          renderCalibration(null);
+          renderFeatureImportance(null);
+        }
+        try {
+          const unlabeled = await getJson("../reports/unlabeled_triage_summary.json");
+          renderUnlabeledTriage(unlabeled);
+        } catch {
+          renderUnlabeledTriage(null);
+        }
+        renderPlain(metrics, profile);
+        setText("updated", "Updated " + new Date().toLocaleTimeString());
+      }
+      refresh();
+      setInterval(refresh, 2000);
+    </script>
+  </body>
+</html>
