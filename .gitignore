@@ -12,3 +12,4 @@ reports/*
 !models/.gitkeep
 !reports/.gitkeep
 !reports/*.md
+!examples/*.csv

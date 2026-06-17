@@ -33,5 +33,6 @@ records scored by the cautious model:
 
 - `reports/unlabeled_triage_top.csv`
 - `reports/unlabeled_triage_summary.json`
+- optional user-generated score files such as `reports/example_scored_variants.csv`
 
 These are generated artifacts and are not committed by default.

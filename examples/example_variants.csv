@@ -1,0 +1,5 @@
+GeneSymbol,Name,Type,MolecularConsequence,ClinicalSignificance
+LDLR,NM_000527.5(LDLR):c.2402_2403del (p.Phe801fs),Deletion,frameshift_variant,Uncertain significance
+APOB,NM_000384.3(APOB):c.10580G>A (p.Arg3527Gln),single nucleotide variant,missense_variant,not provided
+PCSK9,NM_174936.4(PCSK9):c.1120G>T (p.Asp374Tyr),single nucleotide variant,missense_variant,not provided
+

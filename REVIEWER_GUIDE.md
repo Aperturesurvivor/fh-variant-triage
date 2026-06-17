@@ -47,3 +47,13 @@ Git.
 
 Run `python scripts/audit_artifacts.py` to check these quickly.
 
+## Bring-Your-Own Variant CSV
+
+After running the pipeline, score a small CSV of FH-gene variants:
+
+```bash
+python scripts/score_variants_csv.py examples/example_variants.csv reports/example_scored_variants.csv
+```
+
+This is a research triage score. It is not a clinical classification and should
+not be used as a substitute for ACMG/ClinGen interpretation.

@@ -64,6 +64,16 @@ Then read:
 - [PEER_REVIEW_NOTES.md](PEER_REVIEW_NOTES.md) for supported and unsupported claims.
 - [MODEL_CARD.md](MODEL_CARD.md) for intended-use boundaries.
 
+Score your own small FH-gene variant CSV after training:
+
+```bash
+python scripts/score_variants_csv.py examples/example_variants.csv reports/example_scored_variants.csv
+```
+
+Input can use ClinVar-like columns such as `GeneSymbol`, `Name`, `Type`, and
+`MolecularConsequence`, or normalized aliases such as `gene`, `variant_name`,
+and `variant_type`.
+
 Open the local monitor:
 
 ```bash
