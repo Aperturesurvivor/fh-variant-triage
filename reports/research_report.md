@@ -8,6 +8,8 @@ This project asks whether open ClinVar data contains enough signal to build a fi
 
 The current model does not estimate a person's chance of having FH. It estimates whether a variant resembles ClinVar variants labeled benign/likely benign or pathogenic/likely pathogenic.
 
+A final run manifest is generated after this report at `reports/run_manifest.json`; it records artifact hashes, runtime details, git state, and the ClinVar source URL.
+
 ## Dataset
 
 - Total FH-gene ClinVar variants: 11,514

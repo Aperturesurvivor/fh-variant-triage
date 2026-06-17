@@ -36,6 +36,7 @@ python scripts/analyze_model.py
 python scripts/learning_curve.py
 python scripts/validate_splits.py
 python scripts/generate_report.py
+python scripts/generate_manifest.py
 python scripts/audit_artifacts.py
 python -m pytest
 ```
@@ -69,6 +70,8 @@ make test
 Then read:
 
 - [reports/research_report.md](reports/research_report.md) for the generated results.
+- `reports/run_manifest.json` for artifact hashes, raw ClinVar hash, Python
+  version, and git commit after running the pipeline.
 - [PEER_REVIEW_NOTES.md](PEER_REVIEW_NOTES.md) for supported and unsupported claims.
 - [MODEL_CARD.md](MODEL_CARD.md) for intended-use boundaries.
 

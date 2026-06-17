@@ -51,6 +51,7 @@ Git.
 - `reports/unlabeled_triage_summary.json`
 - `reports/unlabeled_triage_top.csv`
 - `reports/research_report.md`
+- `reports/run_manifest.json`
 - `models/fh_cautious_random_forest.joblib`
 
 Run `python scripts/audit_artifacts.py` to check these quickly.

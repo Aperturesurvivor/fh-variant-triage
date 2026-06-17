@@ -13,11 +13,13 @@ REQUIRED_JSON = {
     "reports/learning_curve.json": ["points"],
     "reports/validation_splits.json": ["splits"],
     "reports/unlabeled_triage_summary.json": ["unlabeled_rows_scored", "triage_band_counts", "top_20"],
+    "reports/run_manifest.json": ["artifacts", "clinvar_source", "git", "python"],
 }
 
 REQUIRED_FILES = [
     "reports/research_report.md",
     "reports/unlabeled_triage_top.csv",
+    "reports/run_manifest.json",
     "models/fh_cautious_random_forest.joblib",
     "models/fh_cautious_features.json",
 ]
@@ -84,6 +86,19 @@ def main() -> None:
         fail("too few uncertain/conflicting variants scored")
     if not unlabeled["top_20"]:
         fail("missing top uncertain-variant candidates")
+
+    manifest = loaded["reports/run_manifest.json"]
+    manifest_paths = {row["path"]: row for row in manifest["artifacts"]}
+    for expected in REQUIRED_FILES:
+        if expected == "reports/run_manifest.json":
+            continue
+        if expected not in manifest_paths:
+            fail(f"run manifest missing artifact record for {expected}")
+        if not manifest_paths[expected].get("exists"):
+            fail(f"run manifest says required artifact is missing: {expected}")
+    raw = manifest_paths.get("data/raw/variant_summary.txt.gz", {})
+    if raw.get("bytes", 0) < 1_000_000:
+        fail("ClinVar raw artifact record is unexpectedly small or missing")
 
     report = pathlib.Path("reports/research_report.md").read_text()
     for heading in [

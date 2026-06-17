@@ -34,5 +34,7 @@ records scored by the cautious model:
 - `reports/unlabeled_triage_top.csv`
 - `reports/unlabeled_triage_summary.json`
 - optional user-generated score files such as `reports/example_scored_variants.csv`
+- `reports/run_manifest.json`, which records artifact hashes and runtime
+  provenance after `scripts/run_pipeline.py`
 
 These are generated artifacts and are not committed by default.

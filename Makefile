@@ -1,4 +1,4 @@
-.PHONY: install test pipeline audit dashboard score-example clean
+.PHONY: install test pipeline audit manifest dashboard score-example clean
 
 PYTHON ?= $(shell if [ -x .venv/bin/python ]; then echo .venv/bin/python; else echo python3; fi)
 
@@ -13,6 +13,9 @@ pipeline:
 
 audit:
 	$(PYTHON) scripts/audit_artifacts.py
+
+manifest:
+	$(PYTHON) scripts/generate_manifest.py
 
 dashboard:
 	$(PYTHON) -m http.server 8765
