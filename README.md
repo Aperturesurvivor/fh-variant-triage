@@ -58,6 +58,14 @@ python scripts/run_pipeline.py
 python -m pytest
 ```
 
+Equivalent `make` shortcuts are available:
+
+```bash
+make install
+make pipeline
+make test
+```
+
 Then read:
 
 - [reports/research_report.md](reports/research_report.md) for the generated results.
@@ -73,6 +81,9 @@ python scripts/score_variants_csv.py examples/example_variants.csv reports/examp
 Input can use ClinVar-like columns such as `GeneSymbol`, `Name`, `Type`, and
 `MolecularConsequence`, or normalized aliases such as `gene`, `variant_name`,
 and `variant_type`.
+
+See [docs/INPUT_SCHEMA.md](docs/INPUT_SCHEMA.md) for accepted columns and output
+interpretation.
 
 Open the local monitor:
 

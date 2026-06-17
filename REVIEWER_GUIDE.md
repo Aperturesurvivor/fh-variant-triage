@@ -10,6 +10,14 @@ python scripts/run_pipeline.py
 python -m pytest
 ```
 
+Equivalent:
+
+```bash
+make install
+make pipeline
+make test
+```
+
 `scripts/run_pipeline.py` downloads ClinVar data and regenerates all local
 analysis artifacts. Raw and generated data files are intentionally ignored by
 Git.
@@ -57,3 +65,5 @@ python scripts/score_variants_csv.py examples/example_variants.csv reports/examp
 
 This is a research triage score. It is not a clinical classification and should
 not be used as a substitute for ACMG/ClinGen interpretation.
+
+See `docs/INPUT_SCHEMA.md` for accepted columns.
