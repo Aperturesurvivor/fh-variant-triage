@@ -27,6 +27,7 @@ except ModuleNotFoundError:
 
 DATA = pathlib.Path("data/processed/fh_clinvar_variants.csv")
 OUT = pathlib.Path("reports/model_analysis.json")
+THRESHOLDS = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 
 
 def make_cautious_model(x_train: pd.DataFrame) -> Pipeline:
@@ -44,6 +45,57 @@ def make_cautious_model(x_train: pd.DataFrame) -> Pipeline:
             ),
         ]
     )
+
+
+def score_model(name: str, model: Pipeline, x_train: pd.DataFrame, y_train: np.ndarray, x_test: pd.DataFrame, y_test: np.ndarray) -> dict:
+    model.fit(x_train, y_train)
+    scores = model.predict_proba(x_test)[:, 1]
+    pred = (scores >= 0.5).astype(int)
+    return {
+        "name": name,
+        "features": list(x_train.columns),
+        "summary_metrics": {
+            "accuracy": float(accuracy_score(y_test, pred)),
+            "balanced_accuracy": float(balanced_accuracy_score(y_test, pred)),
+            "roc_auc": float(roc_auc_score(y_test, scores)),
+            "average_precision": float(average_precision_score(y_test, scores)),
+            "brier_score": float(brier_score_loss(y_test, scores)),
+        },
+        "confusion_matrix": confusion_matrix(y_test, pred, labels=[0, 1]).tolist(),
+    }
+
+
+def simple_rule_scores(x: pd.DataFrame) -> np.ndarray:
+    scores = np.full(len(x), 0.20)
+    gene = x["gene"].astype(str)
+    variant_type = x["variant_type_simple"].astype(str)
+    type_text = x["type"].astype(str).str.lower()
+    lof = x["is_lof_like"].astype(str).str.lower().eq("true")
+
+    scores += np.where(gene.eq("LDLR"), 0.20, 0.0)
+    scores += np.where(gene.eq("PCSK9"), 0.05, 0.0)
+    scores += np.where(variant_type.isin(["deletion", "duplication", "delins"]), 0.35, 0.0)
+    scores += np.where(type_text.str.contains("deletion|duplication|frameshift", regex=True), 0.15, 0.0)
+    scores += np.where(lof, 0.25, 0.0)
+    scores -= np.where(gene.eq("APOB") & variant_type.eq("substitution"), 0.10, 0.0)
+    return np.clip(scores, 0.01, 0.99)
+
+
+def score_rule_baseline(x_test: pd.DataFrame, y_test: np.ndarray) -> dict:
+    scores = simple_rule_scores(x_test)
+    pred = (scores >= 0.5).astype(int)
+    return {
+        "name": "transparent_rule_baseline",
+        "notes": "Hand-built heuristic from gene and coarse variant class only; useful as an interpretable sanity baseline, not as ACMG guidance.",
+        "summary_metrics": {
+            "accuracy": float(accuracy_score(y_test, pred)),
+            "balanced_accuracy": float(balanced_accuracy_score(y_test, pred)),
+            "roc_auc": float(roc_auc_score(y_test, scores)),
+            "average_precision": float(average_precision_score(y_test, scores)),
+            "brier_score": float(brier_score_loss(y_test, scores)),
+        },
+        "confusion_matrix": confusion_matrix(y_test, pred, labels=[0, 1]).tolist(),
+    }
 
 
 def metric_row(y_true: np.ndarray, scores: np.ndarray, threshold: float) -> dict:
@@ -168,9 +220,30 @@ def main() -> None:
         },
         "confidence_intervals": bootstrap_ci(y_test, scores),
         "calibration_bins": calibration_bins(y_test, scores),
-        "operating_points": [metric_row(y_test, scores, threshold) for threshold in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]],
+        "operating_points": [metric_row(y_test, scores, threshold) for threshold in THRESHOLDS],
         "top_feature_importances": feature_importance(model),
+        "ablation_models": [],
     }
+
+    ablations = {
+        "cautious_no_review_metadata": x_train,
+        "no_name_length": x_train.drop(columns=["name_length"]),
+        "no_gene": x_train.drop(columns=["gene"]),
+        "coarse_gene_and_variant_class_only": x_train[["gene", "variant_type_simple", "type", "is_lof_like"]],
+    }
+    x_test_by_name = {
+        "cautious_no_review_metadata": x_test,
+        "no_name_length": x_test.drop(columns=["name_length"]),
+        "no_gene": x_test.drop(columns=["gene"]),
+        "coarse_gene_and_variant_class_only": x_test[["gene", "variant_type_simple", "type", "is_lof_like"]],
+    }
+    for name, x_train_variant in ablations.items():
+        model_variant = make_cautious_model(x_train_variant)
+        payload["ablation_models"].append(
+            score_model(name, model_variant, x_train_variant, y_train, x_test_by_name[name], y_test)
+        )
+    payload["rule_baseline"] = score_rule_baseline(x_test, y_test)
+
     OUT.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
     print(json.dumps(payload, indent=2, sort_keys=True))
     write_status("model_analysis_complete", "Wrote calibration, threshold, and feature-importance analysis")

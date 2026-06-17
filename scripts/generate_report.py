@@ -137,6 +137,28 @@ def main() -> None:
     lines.extend(
         [
             "",
+            "## Ablation And Rule Baselines",
+            "",
+            "Ablations ask whether the model survives when suspect or high-level features are removed.",
+            "",
+            "| Model variant | Accuracy | Balanced accuracy | ROC-AUC | Brier score |",
+            "| --- | ---: | ---: | ---: | ---: |",
+        ]
+    )
+    for row in analysis["ablation_models"]:
+        metrics = row["summary_metrics"]
+        lines.append(
+            f"| {row['name']} | {pct(metrics['accuracy'])} | {pct(metrics['balanced_accuracy'])} | {metrics['roc_auc']:.3f} | {metrics['brier_score']:.4f} |"
+        )
+    rule = analysis["rule_baseline"]
+    rule_metrics = rule["summary_metrics"]
+    lines.append(
+        f"| {rule['name']} | {pct(rule_metrics['accuracy'])} | {pct(rule_metrics['balanced_accuracy'])} | {rule_metrics['roc_auc']:.3f} | {rule_metrics['brier_score']:.4f} |"
+    )
+
+    lines.extend(
+        [
+            "",
             "## Uncertain Variant Triage Output",
             "",
             f"The trained cautious model scored {unlabeled['unlabeled_rows_scored']:,} unlabeled, uncertain, conflicting, or otherwise excluded ClinVar records for research triage.",
@@ -180,7 +202,7 @@ def main() -> None:
             "",
             "The random holdout and temporal split suggest useful signal in the open ClinVar-derived features. The gene holdout tests show limited cross-gene portability, especially when the held-out gene has a different pathogenic/benign balance or different variant mechanisms. That means the project should move toward gene-aware models and external biological annotations rather than a single generic FH classifier.",
             "",
-            "The feature-importance results also show that the current model relies heavily on variant-name length and coarse variant class. Those are useful triage proxies but not sufficient biological evidence. High-scoring uncertain variants should be read as expert-review candidates, not reclassifications.",
+            "The feature-importance and ablation results show that the current model relies heavily on variant-name length, gene identity, and coarse variant class. Those are useful triage proxies but not sufficient biological evidence. High-scoring uncertain variants should be read as expert-review candidates, not reclassifications.",
             "",
             "## Next Research Steps",
             "",

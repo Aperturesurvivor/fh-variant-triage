@@ -245,6 +245,10 @@
         <div id="feature-importance" class="empty">Waiting for model analysis.</div>
       </section>
       <section class="span-12">
+        <h2>Ablation Checks</h2>
+        <div id="ablation-models" class="empty">Waiting for model analysis.</div>
+      </section>
+      <section class="span-12">
         <h2>Harder Validation Tests</h2>
         <div id="validation-splits" class="empty">Waiting for validation split results.</div>
       </section>
@@ -487,6 +491,41 @@
           </div>
         `).join("");
       }
+      function renderAblations(payload) {
+        const target = document.getElementById("ablation-models");
+        const rows = payload?.ablation_models || [];
+        if (!rows.length) {
+          target.className = "empty";
+          target.textContent = "Waiting for model analysis.";
+          return;
+        }
+        const allRows = [...rows, payload.rule_baseline].filter(Boolean);
+        target.className = "";
+        target.innerHTML = `
+          <table>
+            <thead><tr><th>Model variant</th><th>Why it matters</th><th>Accuracy</th><th>Balanced Acc.</th><th>ROC-AUC</th></tr></thead>
+            <tbody>
+              ${allRows.map(r => {
+                const m = r.summary_metrics;
+                const note = r.name === "no_name_length" ? "Tests whether variant-name length is inflating performance."
+                  : r.name === "no_gene" ? "Tests whether the model mostly learns gene-level label imbalance."
+                  : r.name === "transparent_rule_baseline" ? "Interpretable hand-built sanity baseline."
+                  : r.name === "coarse_gene_and_variant_class_only" ? "Uses only broad, easy-to-explain features."
+                  : "Main cautious feature set.";
+                return `
+                  <tr>
+                    <td>${r.name}</td>
+                    <td>${note}</td>
+                    <td>${pct(m.accuracy)}</td>
+                    <td>${pct(m.balanced_accuracy)}</td>
+                    <td>${m.roc_auc.toFixed(3)}</td>
+                  </tr>
+                `;
+              }).join("")}
+            </tbody>
+          </table>
+        `;
+      }
       function renderUnlabeledTriage(payload) {
         const target = document.getElementById("unlabeled-triage");
         if (!payload?.top_20?.length) {
@@ -560,10 +599,12 @@
           renderOperatingPoints(analysis);
           renderCalibration(analysis);
           renderFeatureImportance(analysis);
+          renderAblations(analysis);
         } catch {
           renderOperatingPoints(null);
           renderCalibration(null);
           renderFeatureImportance(null);
+          renderAblations(null);
         }
         try {
           const unlabeled = await getJson("../reports/unlabeled_triage_summary.json");

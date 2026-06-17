@@ -91,6 +91,18 @@ Top model features by random-forest importance:
 | `cat__variant_type_simple_delins` | 0.0017 |
 | `cat__type_Microsatellite` | 0.0017 |
 
+## Ablation And Rule Baselines
+
+Ablations ask whether the model survives when suspect or high-level features are removed.
+
+| Model variant | Accuracy | Balanced accuracy | ROC-AUC | Brier score |
+| --- | ---: | ---: | ---: | ---: |
+| cautious_no_review_metadata | 91.8% | 91.5% | 0.974 | 0.0572 |
+| no_name_length | 81.0% | 83.1% | 0.904 | 0.1140 |
+| no_gene | 79.7% | 78.6% | 0.865 | 0.1418 |
+| coarse_gene_and_variant_class_only | 81.0% | 83.1% | 0.904 | 0.1140 |
+| transparent_rule_baseline | 77.4% | 73.4% | 0.888 | 0.1339 |
+
 ## Uncertain Variant Triage Output
 
 The trained cautious model scored 5,364 unlabeled, uncertain, conflicting, or otherwise excluded ClinVar records for research triage.
@@ -129,7 +141,7 @@ Top 10 generated candidates:
 
 The random holdout and temporal split suggest useful signal in the open ClinVar-derived features. The gene holdout tests show limited cross-gene portability, especially when the held-out gene has a different pathogenic/benign balance or different variant mechanisms. That means the project should move toward gene-aware models and external biological annotations rather than a single generic FH classifier.
 
-The feature-importance results also show that the current model relies heavily on variant-name length and coarse variant class. Those are useful triage proxies but not sufficient biological evidence. High-scoring uncertain variants should be read as expert-review candidates, not reclassifications.
+The feature-importance and ablation results show that the current model relies heavily on variant-name length, gene identity, and coarse variant class. Those are useful triage proxies but not sufficient biological evidence. High-scoring uncertain variants should be read as expert-review candidates, not reclassifications.
 
 ## Next Research Steps
 

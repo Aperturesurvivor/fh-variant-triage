@@ -23,7 +23,8 @@ a clinical product.
 
 - The top feature in the current cautious random forest is variant-name length,
   which is likely an annotation artifact or complexity proxy, not direct
-  biology.
+  biology. The repository now includes ablations that remove this feature and
+  report how much performance changes.
 - Current features are too weak: no population frequency, protein-domain
   context, family segregation, functional assay data, or external pathogenicity
   scores yet.
@@ -43,4 +44,3 @@ a clinical product.
 4. Compare the model against published FH-specific tools and ClinGen expert
    panel classifications.
 5. Build a small manual-review set from the generated VUS candidate CSV.
-

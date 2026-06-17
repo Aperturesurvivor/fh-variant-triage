@@ -50,6 +50,9 @@ The project reports several validation settings:
 - variant-class shift: train on non-substitution variants and test substitutions
 - threshold operating points, calibration bins, Brier score, and bootstrap
   confidence intervals on the cautious random-holdout model
+- ablations that remove artifact-prone features such as variant-name length and
+  high-level gene identity
+- a transparent hand-built rule baseline for sanity comparison
 
 The hard splits are more important than the random split for judging whether the
 model learned portable signal rather than ClinVar curation artifacts.
