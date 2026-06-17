@@ -120,6 +120,28 @@ See [REVIEWER_GUIDE.md](REVIEWER_GUIDE.md) for a peer-review checklist.
 See [ROADMAP.md](ROADMAP.md) and [docs/MANUSCRIPT_DRAFT.md](docs/MANUSCRIPT_DRAFT.md)
 for planned scientific extensions and manuscript framing.
 
+## Data Collaboration
+
+This project is intentionally limited to public, reproducible inputs. The next
+major improvements require independent evidence beyond ClinVar labels.
+
+Useful datasets or annotations would include:
+
+- FH variant functional assay results for `LDLR`, `APOB`, or `PCSK9`
+- expert ACMG/AMP or ClinGen-reviewed classifications not used during training
+- population-frequency annotations across diverse ancestries
+- phenotype-linked cohorts with LDL-C, age, treatment status, family history,
+  ancestry context, and genotype
+- segregation evidence from families
+- splicing, protein-domain, conservation, or saturation-mutagenesis annotations
+- independent validation sets from clinics, registries, or biobanks that can be
+  shared ethically and legally
+
+Researchers, clinicians, patient registries, or dataset maintainers with ideas
+for additional public datasets or permissible validation data are encouraged to
+open an issue or discussion. Please do not share private health information in
+GitHub issues.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
