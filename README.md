@@ -133,6 +133,21 @@ claims, and known reviewer concerns.
 See [REVIEWER_GUIDE.md](REVIEWER_GUIDE.md) for a peer-review checklist.
 See [ROADMAP.md](ROADMAP.md) and [docs/MANUSCRIPT_DRAFT.md](docs/MANUSCRIPT_DRAFT.md)
 for planned scientific extensions and manuscript framing.
+See [docs/PROJECT_BRIEF.md](docs/PROJECT_BRIEF.md) and
+[docs/REPO_MAP.md](docs/REPO_MAP.md) for project orientation.
+
+## Validation And Outreach
+
+The project is designed to be tested, criticized, and externally validated.
+
+- [docs/VALIDATION_REQUEST.md](docs/VALIDATION_REQUEST.md) is a short request
+  to domain experts and technical reviewers.
+- [docs/EXTERNAL_VALIDATION_PROTOCOL.md](docs/EXTERNAL_VALIDATION_PROTOCOL.md)
+  describes how external datasets can be used to test the tool.
+- [docs/OUTREACH_TARGETS.md](docs/OUTREACH_TARGETS.md) lists likely groups to
+  contact and an outreach message template.
+- [docs/GITHUB_PUBLISHING.md](docs/GITHUB_PUBLISHING.md) covers the remaining
+  local steps to publish the repo.
 
 ## Data Collaboration
 
