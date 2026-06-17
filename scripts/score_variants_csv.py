@@ -9,11 +9,11 @@ import pandas as pd
 
 try:
     from train_baseline import build_features
-    from build_dataset import is_loss_of_function, variant_type
+    from build_dataset import cdna_region_type, is_loss_of_function, protein_effect_type, variant_type
     from score_unlabeled import triage_band
 except ModuleNotFoundError:
     from scripts.train_baseline import build_features
-    from scripts.build_dataset import is_loss_of_function, variant_type
+    from scripts.build_dataset import cdna_region_type, is_loss_of_function, protein_effect_type, variant_type
     from scripts.score_unlabeled import triage_band
 
 
@@ -52,6 +52,10 @@ def ensure_columns(df: pd.DataFrame) -> pd.DataFrame:
 
     if "variant_type_simple" not in out.columns:
         out["variant_type_simple"] = out["Name"].map(variant_type)
+    if "protein_effect_type" not in out.columns:
+        out["protein_effect_type"] = out["Name"].map(protein_effect_type)
+    if "cdna_region_type" not in out.columns:
+        out["cdna_region_type"] = out["Name"].map(cdna_region_type)
     if "is_lof_like" not in out.columns:
         out["is_lof_like"] = out.apply(is_loss_of_function, axis=1)
     if "name_length" not in out.columns:
@@ -94,4 +98,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

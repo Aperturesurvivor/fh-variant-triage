@@ -30,6 +30,7 @@ The cautious model avoids review status and submitter count. It uses:
 - gene symbol
 - ClinVar variant type
 - simple variant class parsed from the variant name
+- parsed cDNA-region and protein-effect classes from HGVS-like names
 - molecular consequence when present in the source file
 - a string-derived loss-of-function-like flag
 - variant-name length as a crude complexity proxy

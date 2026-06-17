@@ -69,7 +69,7 @@ def main() -> None:
     if analysis["summary_metrics"]["balanced_accuracy"] < 0.75:
         fail("cautious model balanced accuracy unexpectedly low")
     ablation_names = {row["name"] for row in analysis["ablation_models"]}
-    for expected in ["no_name_length", "no_gene", "coarse_gene_and_variant_class_only"]:
+    for expected in ["no_name_length", "no_gene", "parsed_hgvs_without_name_length", "coarse_gene_and_variant_class_only"]:
         if expected not in ablation_names:
             fail(f"missing ablation {expected}")
 
@@ -101,4 +101,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

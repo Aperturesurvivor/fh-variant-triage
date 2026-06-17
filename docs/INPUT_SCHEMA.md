@@ -55,6 +55,8 @@ If these are absent, the scorer derives them:
 | Column | How it is derived |
 | --- | --- |
 | `variant_type_simple` | Parsed from `Name`; values include `substitution`, `deletion`, `duplication`, `insertion`, `delins`, `other`. |
+| `protein_effect_type` | Parsed from `Name`; values include `missense`, `synonymous`, `frameshift`, `stop_gained`, `inframe_protein_deletion`, and related buckets. |
+| `cdna_region_type` | Parsed from `Name`; values include `single_base_substitution`, `splice_region_or_intronic`, `three_prime_utr`, `multi_base_or_range`, and related buckets. |
 | `is_lof_like` | String search over name/type/consequence for loss-of-function-like terms. |
 | `name_length` | Character length of `Name`. |
 
@@ -71,4 +73,3 @@ The output preserves input/normalized columns and adds:
 
 Scores are research triage signals. They are not diagnoses, not ACMG/ClinGen
 classifications, and not person-level probabilities of FH.
-

@@ -21,10 +21,10 @@ a clinical product.
 
 ## Known Reviewer Concerns
 
-- The top feature in the current cautious random forest is variant-name length,
-  which is likely an annotation artifact or complexity proxy, not direct
-  biology. The repository now includes ablations that remove this feature and
-  report how much performance changes.
+- Earlier versions relied heavily on variant-name length, an annotation
+  artifact/complexity proxy. The current feature set parses HGVS-like protein
+  and cDNA consequence buckets, and ablations now show performance remains
+  strong without raw `name_length`.
 - Current features are too weak: no population frequency, protein-domain
   context, family segregation, functional assay data, or external pathogenicity
   scores yet.

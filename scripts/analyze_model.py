@@ -229,13 +229,15 @@ def main() -> None:
         "cautious_no_review_metadata": x_train,
         "no_name_length": x_train.drop(columns=["name_length"]),
         "no_gene": x_train.drop(columns=["gene"]),
-        "coarse_gene_and_variant_class_only": x_train[["gene", "variant_type_simple", "type", "is_lof_like"]],
+        "parsed_hgvs_without_name_length": x_train[["gene", "variant_type_simple", "protein_effect_type", "cdna_region_type", "is_lof_like"]],
+        "coarse_gene_and_variant_class_only": x_train[["gene", "variant_type_simple", "protein_effect_type", "cdna_region_type", "type", "is_lof_like"]],
     }
     x_test_by_name = {
         "cautious_no_review_metadata": x_test,
         "no_name_length": x_test.drop(columns=["name_length"]),
         "no_gene": x_test.drop(columns=["gene"]),
-        "coarse_gene_and_variant_class_only": x_test[["gene", "variant_type_simple", "type", "is_lof_like"]],
+        "parsed_hgvs_without_name_length": x_test[["gene", "variant_type_simple", "protein_effect_type", "cdna_region_type", "is_lof_like"]],
+        "coarse_gene_and_variant_class_only": x_test[["gene", "variant_type_simple", "protein_effect_type", "cdna_region_type", "type", "is_lof_like"]],
     }
     for name, x_train_variant in ablations.items():
         model_variant = make_cautious_model(x_train_variant)

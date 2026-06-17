@@ -45,6 +45,8 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
     x["gene"] = df["GeneSymbol"].fillna("unknown")
     x["type"] = df["Type"].fillna("unknown")
     x["variant_type_simple"] = df["variant_type_simple"].fillna("unknown")
+    x["protein_effect_type"] = df["protein_effect_type"].fillna("unknown") if "protein_effect_type" in df.columns else "unknown"
+    x["cdna_region_type"] = df["cdna_region_type"].fillna("unknown") if "cdna_region_type" in df.columns else "unknown"
     if "MolecularConsequence" in df.columns:
         x["molecular_consequence"] = df["MolecularConsequence"].fillna("unknown")
     else:
@@ -76,6 +78,7 @@ def make_preprocessor(x: pd.DataFrame) -> ColumnTransformer:
     categorical = [
         col
         for col in ["gene", "type", "variant_type_simple", "molecular_consequence", "review_status", "is_lof_like"]
+        + ["protein_effect_type", "cdna_region_type"]
         if col in x.columns
     ]
     numeric = [col for col in ["number_submitters", "name_length"] if col in x.columns]

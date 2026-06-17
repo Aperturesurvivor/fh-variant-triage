@@ -37,6 +37,7 @@ The cautious model excludes review status and submitter count. Current features:
 - gene
 - ClinVar variant type
 - simple variant class parsed from the variant name
+- parsed cDNA-region and protein-effect classes from HGVS-like names
 - molecular consequence when available
 - string-derived loss-of-function-like flag
 - variant-name length

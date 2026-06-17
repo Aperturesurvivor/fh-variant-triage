@@ -202,7 +202,7 @@ def main() -> None:
             "",
             "The random holdout and temporal split suggest useful signal in the open ClinVar-derived features. The gene holdout tests show limited cross-gene portability, especially when the held-out gene has a different pathogenic/benign balance or different variant mechanisms. That means the project should move toward gene-aware models and external biological annotations rather than a single generic FH classifier.",
             "",
-            "The feature-importance and ablation results show that the current model relies heavily on variant-name length, gene identity, and coarse variant class. Those are useful triage proxies but not sufficient biological evidence. High-scoring uncertain variants should be read as expert-review candidates, not reclassifications.",
+            "The parsed HGVS/protein-effect features reduce the earlier dependence on raw variant-name length: the no-name-length and parsed-HGVS ablations remain strong. The model still relies on coarse public annotation patterns, gene identity, and ClinVar-derived labels, so high-scoring uncertain variants should be read as expert-review candidates, not reclassifications.",
             "",
             "## Next Research Steps",
             "",

@@ -3,6 +3,7 @@ from __future__ import annotations
 import gzip
 import json
 import pathlib
+import re
 from collections import Counter
 
 import pandas as pd
@@ -41,6 +42,51 @@ def variant_type(name: str) -> str:
     return "other"
 
 
+def protein_effect_type(name: str) -> str:
+    n = str(name or "")
+    p_match = re.search(r"\(p\.([^)]+)\)", n)
+    if not p_match:
+        return "no_protein_change_listed"
+    p = p_match.group(1)
+    p_lower = p.lower()
+    if "=" in p:
+        return "synonymous"
+    if "fs" in p_lower:
+        return "frameshift"
+    if "ter" in p_lower or "*" in p:
+        return "stop_gained"
+    if "delins" in p_lower:
+        return "protein_delins"
+    if "del" in p_lower:
+        return "inframe_protein_deletion"
+    if "dup" in p_lower:
+        return "inframe_protein_duplication"
+    if re.search(r"^[A-Z][a-z]{2}\d+[A-Z][a-z]{2}$", p):
+        return "missense"
+    return "other_protein_change"
+
+
+def cdna_region_type(name: str) -> str:
+    n = str(name or "")
+    c_match = re.search(r":c\.([^ ]+)", n)
+    if not c_match:
+        return "no_cdna_change_listed"
+    c = c_match.group(1)
+    if c.startswith("*"):
+        return "three_prime_utr"
+    if c.startswith("-"):
+        return "five_prime_utr"
+    if "+" in c or "-" in c:
+        return "splice_region_or_intronic"
+    if "_" in c:
+        return "multi_base_or_range"
+    if ">" in c:
+        return "single_base_substitution"
+    if any(token in c for token in ["del", "dup", "ins"]):
+        return "small_indel"
+    return "other_cdna_change"
+
+
 def is_loss_of_function(row: pd.Series) -> bool:
     fields = " ".join(
         str(row.get(col, "")).lower()
@@ -48,6 +94,8 @@ def is_loss_of_function(row: pd.Series) -> bool:
     )
     lof_terms = [
         "frameshift",
+        "fs",
+        "ter",
         "stop_gained",
         "nonsense",
         "splice_acceptor",
@@ -106,6 +154,8 @@ def main() -> None:
                     chunk[col] = ""
             chunk["label"] = chunk["ClinicalSignificance"].map(normalize_label)
             chunk["variant_type_simple"] = chunk["Name"].map(variant_type)
+            chunk["protein_effect_type"] = chunk["Name"].map(protein_effect_type)
+            chunk["cdna_region_type"] = chunk["Name"].map(cdna_region_type)
             chunk["is_lof_like"] = chunk.apply(is_loss_of_function, axis=1)
             chunk["name_length"] = chunk["Name"].fillna("").astype(str).str.len()
             rows.append(chunk)
@@ -127,6 +177,8 @@ def main() -> None:
         "clinical_significance_top": Counter(df["ClinicalSignificance"].fillna("")).most_common(20),
         "review_status_top": Counter(df["ReviewStatus"].fillna("")).most_common(20),
         "variant_type_simple": dict(Counter(df["variant_type_simple"])),
+        "protein_effect_type": dict(Counter(df["protein_effect_type"])),
+        "cdna_region_type": dict(Counter(df["cdna_region_type"])),
         "last_evaluated_nonempty": int(df["LastEvaluated"].fillna("").astype(str).str.len().gt(0).sum()),
     }
     PROFILE.parent.mkdir(parents=True, exist_ok=True)
