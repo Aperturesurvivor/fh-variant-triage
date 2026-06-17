@@ -19,6 +19,7 @@ TRACKED_ARTIFACTS = [
     "reports/model_analysis.json",
     "reports/learning_curve.json",
     "reports/validation_splits.json",
+    "reports/impact_estimate.md",
     "reports/unlabeled_triage_summary.json",
     "reports/unlabeled_triage_top.csv",
     "reports/research_report.md",
@@ -80,4 +81,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

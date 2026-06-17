@@ -53,6 +53,8 @@ def main() -> None:
         "",
         "A final run manifest is generated after this report at `reports/run_manifest.json`; it records artifact hashes, runtime details, git state, and the ClinVar source URL.",
         "",
+        "A separate planning report at `reports/impact_estimate.md` translates the current triage output into rough review-backlog and population-scale impact estimates.",
+        "",
         "## Dataset",
         "",
         f"- Total FH-gene ClinVar variants: {profile['rows_total']:,}",

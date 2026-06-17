@@ -35,6 +35,7 @@ python scripts/train_gene_models.py
 python scripts/analyze_model.py
 python scripts/learning_curve.py
 python scripts/validate_splits.py
+python scripts/estimate_impact.py
 python scripts/generate_report.py
 python scripts/generate_manifest.py
 python scripts/audit_artifacts.py
@@ -49,7 +50,8 @@ python scripts/run_pipeline.py
 
 This downloads public ClinVar data, rebuilds the processed dataset, trains
 baseline and gene-specific models, scores uncertain/conflicting variants,
-regenerates the research report, and audits that the expected artifacts exist.
+regenerates the research and impact reports, and audits that the expected
+artifacts exist.
 
 For a reviewer, the shortest verification path is:
 
@@ -70,6 +72,8 @@ make test
 Then read:
 
 - [reports/research_report.md](reports/research_report.md) for the generated results.
+- [reports/impact_estimate.md](reports/impact_estimate.md) for rough planning
+  estimates of review-backlog prioritization and population-scale opportunity.
 - `reports/run_manifest.json` for artifact hashes, raw ClinVar hash, Python
   version, and git commit after running the pipeline.
 - [PEER_REVIEW_NOTES.md](PEER_REVIEW_NOTES.md) for supported and unsupported claims.
@@ -87,6 +91,16 @@ and `variant_type`.
 
 See [docs/INPUT_SCHEMA.md](docs/INPUT_SCHEMA.md) for accepted columns and output
 interpretation.
+
+Score FH variants from an annotated VCF after training:
+
+```bash
+python scripts/score_variants_vcf.py examples/example_annotated.vcf reports/example_vcf_scored_variants.csv
+```
+
+The VCF scorer is intended to plug in after standard sequencing, variant
+calling, and annotation tools. It currently reads common VEP `CSQ`, SnpEff
+`ANN`, or simple fallback INFO fields for FH gene/effect annotations.
 
 Open the local monitor:
 

@@ -69,3 +69,14 @@ model learned portable signal rather than ClinVar curation artifacts.
 - Person-level FH probability requires genotype plus LDL cholesterol, age, sex,
   family history, ancestry/frequency context, treatment history, and clinical
   diagnosis criteria.
+
+## Pipeline Integration Boundary
+
+The VCF scorer starts after variant calling and annotation. It does not inspect
+FASTQ/BAM/CRAM reads, align sequencing data, or decide whether a variant exists.
+Instead, it reads annotated VCF records from upstream tools and converts
+FH-gene annotations into the same feature schema used by the CSV scorer.
+
+Supported VCF annotation paths currently include VEP `CSQ`, SnpEff `ANN`, and a
+small fallback set of gene/HGVS INFO keys. Unannotated VCFs should be annotated
+before triage scoring.

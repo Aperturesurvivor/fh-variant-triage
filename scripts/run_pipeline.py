@@ -13,6 +13,7 @@ STEPS = [
     ["scripts/analyze_model.py"],
     ["scripts/learning_curve.py"],
     ["scripts/validate_splits.py"],
+    ["scripts/estimate_impact.py"],
     ["scripts/generate_report.py"],
     ["scripts/generate_manifest.py"],
     ["scripts/audit_artifacts.py"],

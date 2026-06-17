@@ -25,10 +25,12 @@ Git.
 ## First Files To Read
 
 1. `reports/research_report.md` — generated quantitative report.
-2. `PEER_REVIEW_NOTES.md` — supported claims, unsupported claims, and known
+2. `reports/impact_estimate.md` — generated planning estimate for triage
+   throughput and population-scale opportunity.
+3. `PEER_REVIEW_NOTES.md` — supported claims, unsupported claims, and known
    concerns.
-3. `MODEL_CARD.md` — intended-use boundaries.
-4. `METHODS.md` — data processing and validation design.
+4. `MODEL_CARD.md` — intended-use boundaries.
+5. `METHODS.md` — data processing and validation design.
 
 ## What To Check Critically
 
@@ -51,6 +53,7 @@ Git.
 - `reports/unlabeled_triage_summary.json`
 - `reports/unlabeled_triage_top.csv`
 - `reports/research_report.md`
+- `reports/impact_estimate.md`
 - `reports/run_manifest.json`
 - `models/fh_cautious_random_forest.joblib`
 
@@ -68,3 +71,15 @@ This is a research triage score. It is not a clinical classification and should
 not be used as a substitute for ACMG/ClinGen interpretation.
 
 See `docs/INPUT_SCHEMA.md` for accepted columns.
+
+## Annotated VCF Integration
+
+After running the pipeline, score FH-gene variants from a VEP- or SnpEff-style
+annotated VCF:
+
+```bash
+python scripts/score_variants_vcf.py examples/example_annotated.vcf reports/example_vcf_scored_variants.csv
+```
+
+This is designed to sit after variant calling and annotation. It does not call
+variants from raw sequencing reads.

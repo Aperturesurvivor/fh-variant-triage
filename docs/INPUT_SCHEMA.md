@@ -1,10 +1,11 @@
 # Input Schema
 
-This project has two main data-entry paths:
+This project has three main data-entry paths:
 
 1. The built-in ClinVar pipeline, which uses NCBI ClinVar
    `variant_summary.txt.gz`.
 2. The bring-your-own CSV scorer, `scripts/score_variants_csv.py`.
+3. The annotated VCF scorer, `scripts/score_variants_vcf.py`.
 
 ## Bring-Your-Own CSV
 
@@ -68,6 +69,43 @@ The output preserves input/normalized columns and adds:
 | --- | --- |
 | `pathogenic_bucket_score` | Prototype probability-like score for resembling ClinVar pathogenic/likely pathogenic records. |
 | `triage_band` | `high_priority_review`, `moderate_priority_review`, `watchlist`, or `lower_priority`. |
+
+## Annotated VCF
+
+Run:
+
+```bash
+python scripts/score_variants_vcf.py examples/example_annotated.vcf reports/example_vcf_scored_variants.csv
+```
+
+This entry point is designed for the standard sequencing pipeline shape:
+
+```text
+sequencing reads -> alignment -> variant calling -> VCF annotation -> FH triage scoring
+```
+
+The scorer does not call variants from raw reads. It expects a VCF that has
+already been produced by tools such as GATK, DeepVariant, or a clinical
+laboratory pipeline and annotated by tools such as VEP or SnpEff.
+
+### Supported VCF Annotation Styles
+
+The VCF scorer currently reads:
+
+| Annotation source | INFO field | Required fields |
+| --- | --- | --- |
+| VEP | `CSQ` | `SYMBOL`, `Consequence`, and ideally `HGVSc` / `HGVSp` |
+| SnpEff | `ANN` | `Gene_Name`, `Annotation`, and ideally `HGVS.c` / `HGVS.p` |
+| Simple fallback | separate INFO keys | `GeneSymbol`, `GENE`, `Gene`, or `SYMBOL`; optional `HGVS`, `HGVSc`, `HGVSp`, `Consequence` |
+
+Rows are kept only when the annotated gene is one of:
+
+- `LDLR`
+- `APOB`
+- `PCSK9`
+
+The VCF output is a CSV with the same scoring columns as the bring-your-own CSV
+path.
 
 ## Interpretation Boundary
 

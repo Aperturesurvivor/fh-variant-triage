@@ -1,0 +1,5 @@
+##fileformat=VCFv4.2
+##INFO=<ID=CSQ,Number=.,Type=String,Description="Consequence annotations from Ensembl VEP. Format: Allele|Consequence|IMPACT|SYMBOL|Gene|Feature_type|Feature|BIOTYPE|EXON|INTRON|HGVSc|HGVSp">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
+19	11216138	.	C	T	.	PASS	CSQ=T|missense_variant|MODERATE|LDLR|ENSG00000130164|Transcript|NM_000527.5|protein_coding|9/18||NM_000527.5:c.1292C>T|NP_000518.1:p.Ala431Val
+2	21001429	.	G	A	.	PASS	CSQ=A|synonymous_variant|LOW|APOB|ENSG00000084674|Transcript|NM_000384.3|protein_coding|26/29||NM_000384.3:c.7734A>G|NP_000375.3:p.Lys2578=

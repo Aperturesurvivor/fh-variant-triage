@@ -12,6 +12,9 @@ Status: current.
 - Calibration, thresholds, ablations, and rule baseline.
 - VUS/conflicting variant triage output.
 - Bring-your-own CSV scoring.
+- Annotated VCF scoring after standard variant calling and annotation.
+- Generated impact-estimate report for review-backlog and population-scale
+  planning discussions.
 - Dashboard and reviewer audit workflow.
 
 ## v0.2: External Annotation Layer
@@ -44,4 +47,3 @@ open variant data is enough.
 - Build a synthetic/mock person-level interface for research design only.
 - Document controlled-access datasets that could support real person-level
   modeling.
-

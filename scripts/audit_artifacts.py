@@ -18,6 +18,7 @@ REQUIRED_JSON = {
 
 REQUIRED_FILES = [
     "reports/research_report.md",
+    "reports/impact_estimate.md",
     "reports/unlabeled_triage_top.csv",
     "reports/run_manifest.json",
     "models/fh_cautious_random_forest.joblib",
@@ -110,6 +111,16 @@ def main() -> None:
     ]:
         if heading not in report:
             fail(f"research report missing heading {heading}")
+
+    impact = pathlib.Path("reports/impact_estimate.md").read_text()
+    for phrase in [
+        "FH Variant Triage Impact Estimate",
+        "Current Model Throughput Signal",
+        "Population-Scale Planning Math",
+        "How This Could Multiply Expert Capacity",
+    ]:
+        if phrase not in impact:
+            fail(f"impact estimate missing phrase {phrase}")
 
     print("Artifact audit passed.")
 

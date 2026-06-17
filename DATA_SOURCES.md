@@ -34,6 +34,10 @@ records scored by the cautious model:
 - `reports/unlabeled_triage_top.csv`
 - `reports/unlabeled_triage_summary.json`
 - optional user-generated score files such as `reports/example_scored_variants.csv`
+- optional user-generated annotated-VCF score files such as
+  `reports/example_vcf_scored_variants.csv`
+- `reports/impact_estimate.md`, which combines current model outputs with
+  transparent FH burden assumptions for planning discussions
 - `reports/run_manifest.json`, which records artifact hashes and runtime
   provenance after `scripts/run_pipeline.py`
 
