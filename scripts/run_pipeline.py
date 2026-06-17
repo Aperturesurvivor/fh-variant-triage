@@ -14,6 +14,7 @@ STEPS = [
     ["scripts/learning_curve.py"],
     ["scripts/validate_splits.py"],
     ["scripts/generate_report.py"],
+    ["scripts/audit_artifacts.py"],
 ]
 
 

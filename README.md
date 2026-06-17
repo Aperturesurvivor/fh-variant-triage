@@ -36,6 +36,7 @@ python scripts/analyze_model.py
 python scripts/learning_curve.py
 python scripts/validate_splits.py
 python scripts/generate_report.py
+python scripts/audit_artifacts.py
 python -m pytest
 ```
 
@@ -44,6 +45,24 @@ Or run the whole analysis pipeline:
 ```bash
 python scripts/run_pipeline.py
 ```
+
+This downloads public ClinVar data, rebuilds the processed dataset, trains
+baseline and gene-specific models, scores uncertain/conflicting variants,
+regenerates the research report, and audits that the expected artifacts exist.
+
+For a reviewer, the shortest verification path is:
+
+```bash
+python -m pip install -e ".[dev]"
+python scripts/run_pipeline.py
+python -m pytest
+```
+
+Then read:
+
+- [reports/research_report.md](reports/research_report.md) for the generated results.
+- [PEER_REVIEW_NOTES.md](PEER_REVIEW_NOTES.md) for supported and unsupported claims.
+- [MODEL_CARD.md](MODEL_CARD.md) for intended-use boundaries.
 
 Open the local monitor:
 

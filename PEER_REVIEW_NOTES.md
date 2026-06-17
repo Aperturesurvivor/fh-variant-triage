@@ -44,3 +44,16 @@ a clinical product.
 4. Compare the model against published FH-specific tools and ClinGen expert
    panel classifications.
 5. Build a small manual-review set from the generated VUS candidate CSV.
+
+## Reproducibility Check
+
+Run:
+
+```bash
+python scripts/run_pipeline.py
+python -m pytest
+```
+
+The pipeline ends with `scripts/audit_artifacts.py`, which checks that expected
+reports, model files, validation splits, ablation outputs, and uncertain-variant
+triage artifacts were generated.
