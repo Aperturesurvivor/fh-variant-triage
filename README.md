@@ -1,10 +1,40 @@
 # FH Variant Triage
 
+[![Tests](https://github.com/Aperturesurvivor/fh-variant-triage/actions/workflows/tests.yml/badge.svg)](https://github.com/Aperturesurvivor/fh-variant-triage/actions/workflows/tests.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Research Only](https://img.shields.io/badge/use-research%20only-blue.svg)](MODEL_CARD.md)
+
 Research prototype for familial hypercholesterolemia variant triage.
 
-This project is not a diagnostic medical tool. It explores whether public
-ClinVar-style data can support a transparent model that prioritizes variants in
-`LDLR`, `APOB`, and `PCSK9` for expert review.
+**Not for diagnosis or clinical decision-making.** This project explores whether
+public ClinVar-style data can support a transparent model that prioritizes
+variants in `LDLR`, `APOB`, and `PCSK9` for expert review.
+
+The model estimates whether a variant resembles ClinVar records labeled
+benign/likely benign or pathogenic/likely pathogenic. It does **not** estimate a
+person's probability of familial hypercholesterolemia and does **not** replace
+ACMG/ClinGen interpretation, a clinical laboratory, a genetic counselor, or a
+clinician.
+
+## Quick Links
+
+- [Model card](MODEL_CARD.md)
+- [Methods](METHODS.md)
+- [Peer review notes](PEER_REVIEW_NOTES.md)
+- [Reviewer guide](REVIEWER_GUIDE.md)
+- [Validation request](docs/VALIDATION_REQUEST.md)
+- [External validation protocol](docs/EXTERNAL_VALIDATION_PROTOCOL.md)
+- [Project brief](docs/PROJECT_BRIEF.md)
+- [Repository map](docs/REPO_MAP.md)
+
+## Validation Wanted
+
+This project is designed to be tested, criticized, and externally validated.
+The most useful next contribution is independent validation against FH variant
+sets not used in training, especially VUS/conflicting variants, expert
+ACMG/ClinGen classifications, functional assay data, or de-identified
+lab/registry benchmarks. Please do not share private health information in
+GitHub issues.
 
 ## Current Status
 
