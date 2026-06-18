@@ -19,11 +19,6 @@ jobs:
       - name: Run tests
         run: python -m pytest
       - name: Check example CSV schema path
-        run: python - <<'PY'
-          import pandas as pd
-          from scripts.score_variants_csv import ensure_columns
-          df = pd.read_csv("examples/example_variants.csv")
-          normalized = ensure_columns(df)
-          assert {"GeneSymbol", "variant_type_simple", "name_length"}.issubset(normalized.columns)
-          print("example schema check passed")
-          PY
+        run: python scripts/score_variants_csv.py examples/example_variants.csv reports/example_scored_variants.csv
+      - name: Check example VCF schema path
+        run: python scripts/score_variants_vcf.py examples/example_annotated.vcf reports/example_vcf_scored_variants.csv
